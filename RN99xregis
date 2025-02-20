@@ -1,0 +1,75 @@
+import random
+import time
+import requests
+
+# URL pendaftaran Facebook
+FB_REGISTER_URL = "https://www.facebook.com/r.php"
+
+# Daftar proxy (contoh)
+proxy_list = [
+    "http://104.236.32.182:3128",
+    "http://138.197.157.32:8080",
+    "http://45.55.27.15:3128",
+    "http://159.203.44.177:3128",
+    "http://165.227.104.229:3128",
+]
+
+# Daftar user-agent mobile
+user_agents = [
+    "Mozilla/5.0 (Linux; Android 10; SM-G970F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Mobile Safari/537.36",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 9; Pixel 3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.66 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 8.1.0; Redmi Note 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.152 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; U; Android 4.2.2; en-us; GT-P5113) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30"
+]
+
+def generate_random_name(gender, country):
+    first_names_male = ['Budi', 'Agus', 'Joko', 'Rudi', 'Hendra']
+    first_names_female = ['Siti', 'Rina', 'Dewi', 'Ani', 'Yuni']
+    last_names = ['Santoso', 'Wijaya', 'Prabowo', 'Kurniawan', 'Siregar']
+    first_name = random.choice(first_names_male if gender == 'l' else first_names_female)
+    last_name = random.choice(last_names)
+    return f"{first_name} {last_name}"
+
+def generate_random_password():
+    chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+    return ''.join(random.choice(chars) for _ in range(8))
+
+def get_random_proxy():
+    return random.choice(proxy_list)
+
+def get_random_user_agent():
+    return random.choice(user_agents)
+
+def create_facebook_account():
+    jumlah = int(input("Jumlah akun yang ingin dibuat: "))
+    gender = input("Gender (r/l/p): ").lower()
+    nama_type = input("Nama random/manual (r/m): ").lower()
+    negara = input("Negara (i/a/v): ").lower()
+    password_type = input("Password random/manual (r/m): ").lower()
+    use_proxy = input("Gunakan proxy? (y/t): ").lower()
+    delay = int(input("Masukkan delay (saran 60-120 detik): "))
+
+    for _ in range(jumlah):
+        if gender == 'r':
+            gender = random.choice(['l', 'p'])
+        name = generate_random_name(gender, negara) if nama_type == 'r' else input("Masukkan nama: ")
+        password = generate_random_password() if password_type == 'r' else input("Masukkan password: ")
+        user_agent = get_random_user_agent()
+        proxies = {"http": get_random_proxy(), "https": get_random_proxy()} if use_proxy == 'y' else None
+        
+        headers = {"User-Agent": user_agent}
+        data = {"firstname": name.split()[0], "lastname": name.split()[1], "password": password}
+        
+        try:
+            response = requests.post(FB_REGISTER_URL, headers=headers, data=data, proxies=proxies)
+            print(f"Response dari server: {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+        
+        time.sleep(delay)
+    print("Proses pembuatan akun selesai.")
+
+if __name__ == "__main__":
+    create_facebook_account()
+
