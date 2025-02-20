@@ -2,7 +2,7 @@ import random
 import time
 import requests
 
-# URL pendaftaran Facebook
+# URL pendaftaran Facebook (tidak bisa otomatis mengisi form pendaftaran)
 FB_REGISTER_URL = "https://www.facebook.com/r.php"
 
 # Daftar proxy (contoh)
@@ -41,35 +41,26 @@ def get_random_proxy():
 def get_random_user_agent():
     return random.choice(user_agents)
 
+def validate_input(prompt, valid_values, input_type=str):
+    """Validasi input untuk memastikan input sesuai dengan nilai yang diinginkan."""
+    while True:
+        user_input = input_type(input(prompt)).lower()
+        if user_input in valid_values:
+            return user_input
+        else:
+            print(f"Input tidak valid. Pilih dari {valid_values}.")
+
 def create_facebook_account():
     jumlah = int(input("Jumlah akun yang ingin dibuat: "))
-    gender = input("Gender (r/l/p): ").lower()
-    nama_type = input("Nama random/manual (r/m): ").lower()
-    negara = input("Negara (i/a/v): ").lower()
-    password_type = input("Password random/manual (r/m): ").lower()
-    use_proxy = input("Gunakan proxy? (y/t): ").lower()
+    
+    gender = validate_input("Gender (r/l/p): ", ['r', 'l', 'p'], str)
+    nama_type = validate_input("Nama random/manual (r/m): ", ['r', 'm'], str)
+    negara = validate_input("Negara (i/a/v): ", ['i', 'a', 'v'], str)
+    password_type = validate_input("Password random/manual (r/m): ", ['r', 'm'], str)
+    use_proxy = validate_input("Gunakan proxy? (y/t): ", ['y', 't'], str)
     delay = int(input("Masukkan delay (saran 60-120 detik): "))
 
     for _ in range(jumlah):
         if gender == 'r':
             gender = random.choice(['l', 'p'])
-        name = generate_random_name(gender, negara) if nama_type == 'r' else input("Masukkan nama: ")
-        password = generate_random_password() if password_type == 'r' else input("Masukkan password: ")
-        user_agent = get_random_user_agent()
-        proxies = {"http": get_random_proxy(), "https": get_random_proxy()} if use_proxy == 'y' else None
-        
-        headers = {"User-Agent": user_agent}
-        data = {"firstname": name.split()[0], "lastname": name.split()[1], "password": password}
-        
-        try:
-            response = requests.post(FB_REGISTER_URL, headers=headers, data=data, proxies=proxies)
-            print(f"Response dari server: {response.status_code}")
-        except requests.exceptions.RequestException as e:
-            print(f"Error: {e}")
-        
-        time.sleep(delay)
-    print("Proses pembuatan akun selesai.")
-
-if __name__ == "__main__":
-    create_facebook_account()
-
+        name = generate_random_name(gender, negara) if nama_type == 'r' else input("Masukk
