@@ -1,6 +1,15 @@
 # RNN99
-Tools ini dibuat dengan kolaborasi user agent dan proxy yang dapat menghilangkan jejak regional device dari suatu apps/website, buat kamu yang suka ngehacker cocok nih yahahah hayukk. Dengan tools ini kamu dapat menghilangkan jejak IP, Device, Imei, Dns pribadi, Hwid, bahkan sampai dpi lohh... Gg kan gua ya iyalaha hacker berkelas
+Tools untuk menghapus log aktifitas sosial media dengan bootstrap khusus yang sudah dimodifikasi dengan auto swith proxy sehingga akunmu tetap aman.
+Bahan yang digunakan :
+1. Program Javascript & Java
+2. Selenium untuk useragent random yang sudah di request pool
+3. Direct Proxy to FoxyProxy KaliLinux with Track desk
+
+Note : silahkan ubah subject sesuai dengan sosial media yang ingin kamu tuju, Dilarang menggunakan private dns karena dapat memblokir akses proxy milikmu sehingga tools akan berjalan ERROR
 
 CARA MENGGUNAKAN :
-(SILAHKAN UBAH ALAMAT WEBSITE DENGAN YANG KAMU TUJU) KAMU JUGA BISA MENGUBAH USER AGENT & ALAMAT PROXY JIKA KAMU MEMPUNYAI NYA SENDIRI.
-
+1. Kompres file dan masukan kedalam ekstensi browser milikmu
+2. Jalankan tools ekstensi
+3. Pergi ke menu log aktifitas dimasing masing sosial media
+4. Klik icon RN99 log untuk memulai tools
+5. Done
