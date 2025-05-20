@@ -1,0 +1,124 @@
+import random
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+import chromedriver_autoinstaller
+
+# Install Chromedriver secara otomatis
+chromedriver_autoinstaller.install()
+
+# Fungsi untuk memilih user agent Android secara acak
+def get_random_user_agent():
+    return "Mozilla/5.0 (Linux; Android 10; Pixel 4 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36"
+
+# Fungsi untuk menghasilkan email acak dengan domain yopmail.com
+def generate_random_email():
+    random_email = ''.join(random.choices('abcdefghijklmnopqrstuvwxyz0123456789', k=10)) + "@yopmail.com"
+    return random_email
+
+def create_facebook_account():
+    # Setup Selenium Options
+    options = Options()
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument(f"user-agent={get_random_user_agent()}")
+    options.add_argument("--window-size=375,667")  # Ukuran layar potrait (375x667px, ukuran umum ponsel)
+    options.add_argument("--disable-tensorflow")  # Menonaktifkan TensorFlow jika mengganggu
+    options.add_argument("--disable-extensions")  # Menonaktifkan ekstensi yang tidak diperlukan
+    options.add_experimental_option('excludeSwitches', ['enable-automation'])  # Menonaktifkan deteksi otomatis
+    options.add_experimental_option('useAutomationExtension', False)  # Agar driver tidak terdeteksi
+
+    # Start WebDriver
+    driver = webdriver.Chrome(options=options)
+
+    try:
+        print("Membuka halaman Facebook mobile...")
+        driver.get("https://m.facebook.com/r.php")
+
+        # Tunggu sampai elemen dimuat dengan waktu yang lebih lama
+        print("Menunggu elemen halaman dimuat...")
+        WebDriverWait(driver, 180).until(
+            EC.presence_of_element_located((By.NAME, "firstname"))
+        )
+
+        print("Halaman berhasil dimuat. Mengisi data pendaftaran...")
+
+        # Menunggu elemen form dan memverifikasi elemen
+        first_name = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.NAME, "firstname"))
+        )
+        last_name = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.NAME, "lastname"))
+        )
+        email = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.NAME, "reg_email__"))
+        )
+        email_confirmation = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.NAME, "reg_email_confirmation__"))
+        )
+        password = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.NAME, "reg_passwd__"))
+        )
+        birth_day = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.NAME, "birthday_day"))
+        )
+        birth_month = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.NAME, "birthday_month"))
+        )
+        birth_year = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.NAME, "birthday_year"))
+        )
+        gender = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.NAME, "sex"))
+        )
+
+        # Pastikan elemen bisa terlihat dan dapat diinteraksi
+        print("Memastikan elemen dapat dilihat dan dapat diinteraksi...")
+        assert first_name.is_displayed(), "First Name element tidak terlihat."
+        assert last_name.is_displayed(), "Last Name element tidak terlihat."
+        assert email.is_displayed(), "Email element tidak terlihat."
+
+        # Mengisi elemen form menggunakan send_keys
+        print("Mengisi form...")
+        first_name.send_keys("Budi")
+        last_name.send_keys("Santoso")
+        random_email = generate_random_email()
+        print(f"Email acak yang digunakan: {random_email}")
+        email.send_keys(random_email)
+        email_confirmation.send_keys(random_email)
+        password.send_keys("password12345")
+        birth_day.send_keys("20")
+        birth_month.send_keys("2")
+        birth_year.send_keys("2000")
+
+        # Pilih jenis kelamin (contoh: pilih jenis kelamin pria)
+        gender.send_keys(Keys.TAB)  # Menggunakan TAB untuk memilih jenis kelamin, atau pilih dengan send_keys("1") untuk pria
+
+        # Tunggu beberapa detik untuk memastikan form siap
+        time.sleep(5)
+
+        # Klik tombol daftar
+        print("Klik tombol daftar...")
+        sign_up_button = WebDriverWait(driver, 20).until(
+            EC.element_to_be_clickable((By.NAME, "websubmit"))
+        )
+        sign_up_button.click()
+
+        # Tunggu lebih lama untuk memastikan form terkirim
+        print("Menunggu 30 detik untuk memastikan form terkirim...")
+        time.sleep(30)
+
+        # Ambil dan tampilkan hasil
+        print("Akun berhasil dibuat. Nama, email, dan password telah dimasukkan.")
+    except Exception as e:
+        print(f"Terjadi kesalahan: {e}")
+    finally:
+        print("Menutup driver...")
+        driver.quit()
+
+if __name__ == "__main__":
+    create_facebook_account()
